@@ -1,0 +1,36 @@
+:root {
+  --accent: #49c5ff;
+  --accent-text: #0d1a23;
+  --btn-border: #545a66;
+  --btn-hover-bg: #353a45;
+  --cover-bg: #242731;
+  --cover-border: #3c414b;
+  --highlight-color: hsla(155, 53%, 57%, 1);
+  --img-bg: url('zelda-totk/assets/bg_black.jpg');
+  --panel-bg: hsla(220, 15%, 15%, 0.1);
+  --panel-border: #2e3442;
+  --picker-bg: #1a1e26;
+  --picker-border: #4c5464;
+  --shadow-accent: 0 8px 22px rgba(73, 197, 255, 0.45);
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.25);
+  --shadow-strong: 0px 20px 36px -10px hsla(0deg 0% 0% / 45%);
+  --text-color: #ffffff;
+  --text-detail: #d5d7dc;
+  --text-muted: #8b92a0;
+  --text-primary: #e8e8e8;
+  --text-secondary: #b7b7b7;
+}
+
+/* 响应亮色模式 */
+@media (prefers-color-scheme: light) {
+  :root {
+    --img-bg: url('zelda-totk/assets/bg_white.jpg');
+  }
+}
+
+/* 响应暗色模式 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --img-bg: url('zelda-totk/assets/bg_black.jpg');
+  }
+}
