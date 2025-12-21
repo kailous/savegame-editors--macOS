@@ -26,6 +26,9 @@
 	<script defer type="text/javascript" src="./zelda-totk.master.js?version=1"></script>
 	<script src="https://unpkg.com/fflate@0.8.0"></script>
 	<script type="text/javascript">
+		window.TOTKMasterEditor=window.TOTKMasterEditor||{};
+	</script>
+	<script type="text/javascript">
 		/* service worker */
 		/*var FORCE_HTTPS=true;
 		window.addEventListener('load',function(){
@@ -1020,6 +1023,61 @@
 		</div>
 	</div>
 </dialog>
+
+<script type="text/javascript">
+// Auto-load progress.sav passed from select-save.html via window.name/sessionStorage
+(function(){
+	var payload=null;
+	if(window.name && window.name.indexOf('TOTK_PAYLOAD:')===0){
+		payload=window.name.slice('TOTK_PAYLOAD:'.length);
+		window.name=''; // clear to avoid replays
+	}else{
+		var key='totkSlotPayload';
+		payload=sessionStorage.getItem(key);
+		if(payload){ sessionStorage.removeItem(key); }
+	}
+	if(!payload){return;}
+
+	function base64ToArrayBuffer(base64){
+		var binary_string=atob(base64);
+		var len=binary_string.length;
+		var bytes=new Uint8Array(len);
+		for(var i=0;i<len;i++){
+			bytes[i]=binary_string.charCodeAt(i);
+		}
+		return bytes.buffer;
+	}
+
+	function loadPayload(){
+		try{
+			var data=JSON.parse(payload);
+			if(!data || !data.progress){return;}
+			var buffer=base64ToArrayBuffer(data.progress);
+
+			tempFile=new MarcFile(buffer.byteLength);
+			tempFile.fileName=data.fileName || 'progress.sav';
+			tempFile.fileType='application/octet-stream';
+			tempFile._u8array=new Uint8Array(buffer);
+			tempFile._dataView=new DataView(buffer);
+			tempFile.littleEndian=true;
+
+			_tempFileLoadFunction();
+		}catch(err){
+			console.error('Failed to auto-load slot payload', err);
+		}
+	}
+
+	function waitForEditorAndLoad(){
+		if(typeof TOTKMasterEditor!=='undefined' && typeof _tempFileLoadFunction==='function'){
+			loadPayload();
+		}else{
+			setTimeout(waitForEditorAndLoad, 50);
+		}
+	}
+
+	window.addEventListener('load', waitForEditorAndLoad);
+})();
+</script>
 
 
 </body>

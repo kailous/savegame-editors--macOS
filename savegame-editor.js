@@ -194,10 +194,15 @@ MarcDragAndDrop=(function(){
 
 
 /* savegame load/save */
-var tempFile,hasBeenLoaded=false;
+var tempFile,hasBeenLoaded=false,originalSaveBackup=null;
+var backupDirHandle=null, saveFileHandle=null;
 function _tempFileLoadFunction(){
 	if(SavegameEditor.checkValidSavegame()){
 		hide('dragzone');
+		// keep a pristine copy for backup before any editor mutations
+		if(tempFile && tempFile._u8array){
+			originalSaveBackup=new Uint8Array(tempFile._u8array);
+		}
 
 		if(SavegameEditor.preload && !hasBeenLoaded){
 			SavegameEditor.preload();
@@ -211,10 +216,14 @@ function _tempFileLoadFunction(){
 	}
 }
 
-function saveChanges(){
+async function saveChanges(){
 	if(decodeURIComponent(document.cookie).indexOf('hideWarningMessage=1')>=0 || location.protocol==='file:'){ /* chrome does not write cookies in local, so skip warning message in that case */
-		SavegameEditor.save();
-		tempFile.save();
+		var saved = await nativeSaveWithBackup();
+		if(!saved){
+			backupOriginalSave();
+			SavegameEditor.save();
+			tempFile.save();
+		}
 	}else{
 		MarcDialogs.open('warning');
 	}
@@ -238,6 +247,129 @@ function getSavegameDefaultName(){
 	if(typeof SavegameEditor.Filename==='string')
 		return SavegameEditor.Filename;
 	return SavegameEditor.Filename[0]
+}
+
+function backupOriginalSave(){
+	if(!originalSaveBackup || !originalSaveBackup.length || !tempFile){
+		return;
+	}
+	try{
+		var timestamp=(function(){
+			var d=new Date();
+			var pad=function(n){return n<10?'0'+n:n;};
+			return d.getFullYear().toString()+
+				pad(d.getMonth()+1)+
+				pad(d.getDate())+'-'+
+				pad(d.getHours())+
+				pad(d.getMinutes())+
+				pad(d.getSeconds());
+		})();
+		var baseName=(tempFile.fileName||'progress.sav').replace(/\.sav$/i,'');
+		var backupName='backup/'+baseName+'_'+timestamp+'.sav';
+		var blob=new Blob([originalSaveBackup], {type: tempFile.fileType||'application/octet-stream'});
+		saveAs(blob, backupName);
+	}catch(err){
+		console.error('Backup failed', err);
+	}
+}
+
+async function ensureNativeHandles(){
+	if(!('showDirectoryPicker' in window) || !('showSaveFilePicker' in window)){
+		return false;
+	}
+	if(!backupDirHandle){
+		try{
+			backupDirHandle=await window.showDirectoryPicker({mode:'readwrite'});
+		}catch(err){
+			return false;
+		}
+	}
+	if(!saveFileHandle){
+		try{
+			saveFileHandle=await window.showSaveFilePicker({
+				suggestedName: tempFile ? (tempFile.fileName || 'progress.sav') : 'progress.sav',
+				types:[{
+					description:'TOTK save',
+					accept:{'application/octet-stream':['.sav']}
+				}]
+			});
+		}catch(err){
+			return false;
+		}
+	}
+	return true;
+}
+
+function buildTimestampedName(baseName){
+	var timestamp=(function(){
+		var d=new Date();
+		var pad=function(n){return n<10?'0'+n:n;};
+		return d.getFullYear().toString()+
+			pad(d.getMonth()+1)+
+			pad(d.getDate())+'-'+
+			pad(d.getHours())+
+			pad(d.getMinutes())+
+			pad(d.getSeconds());
+	})();
+	var cleanBase=baseName.replace(/\.sav$/i,'');
+	return cleanBase+'_'+timestamp+'.sav';
+}
+
+async function writeBackupToNative(){
+	if(!backupDirHandle || !originalSaveBackup || !originalSaveBackup.length){
+		return false;
+	}
+	try{
+		var targetDir=backupDirHandle;
+		// place inside backup subfolder if possible
+		try{
+			targetDir=await backupDirHandle.getDirectoryHandle('backup',{create:true});
+		}catch(_){}
+		var backupName=buildTimestampedName(tempFile && tempFile.fileName ? tempFile.fileName : 'progress.sav');
+		var fileHandle=await targetDir.getFileHandle(backupName,{create:true});
+		var writable=await fileHandle.createWritable();
+		await writable.write(originalSaveBackup);
+		await writable.close();
+		return true;
+	}catch(err){
+		console.error('Native backup failed', err);
+		return false;
+	}
+}
+
+async function writeEditedToNative(){
+	if(!saveFileHandle || !tempFile || !tempFile._u8array){
+		return false;
+	}
+	try{
+		var writable=await saveFileHandle.createWritable();
+		await writable.write(tempFile._u8array);
+		await writable.close();
+		return true;
+	}catch(err){
+		console.error('Native save failed', err);
+		return false;
+	}
+}
+
+async function nativeSaveWithBackup(){
+	if(!originalSaveBackup || !originalSaveBackup.length){
+		return false;
+	}
+	var ready=await ensureNativeHandles();
+	if(!ready){
+		return false;
+	}
+	var backedUp=await writeBackupToNative();
+	if(!backedUp){
+		return false;
+	}
+	SavegameEditor.save();
+	var saved=await writeEditedToNative();
+	if(!saved){
+		return false;
+	}
+	return true;
 }
 function getSavegameAllNames(){
 	if(typeof SavegameEditor.Filename==='string')

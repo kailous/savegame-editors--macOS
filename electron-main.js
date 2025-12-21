@@ -16,7 +16,7 @@ const createWindow = () => {
 
 	mainWindow.removeMenu();
 
-	const entryFile = path.join(__dirname, 'zelda-totk', 'index.html');
+	const entryFile = path.join(__dirname, 'index.html');
 	mainWindow.loadFile(entryFile);
 
 	mainWindow.webContents.setWindowOpenHandler(({url}) => {
