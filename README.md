@@ -18,3 +18,7 @@
  * 《宝可梦消消乐》(Pokémon Shuffle，3DS)
  * 《节奏天国 混音》(Rhythm Paradise Megamix，3DS)
  * 《Mii广场》(StreetPass Mii Plaza，3DS)
+
+## Electron 客户端运行
+1. 安装依赖：在仓库根目录执行 `npm install`
+2. 启动客户端：执行 `npm start`（默认直接打开《塞尔达传说 王国之泪》编辑器）

@@ -1,0 +1,13 @@
+{
+  "name": "totk-savegame-editor",
+  "version": "0.1.0",
+  "description": "Electron wrapper for The Legend of Zelda: Tears of the Kingdom savegame editor.",
+  "private": true,
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "30.5.1"
+  }
+}
