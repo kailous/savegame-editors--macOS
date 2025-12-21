@@ -101,6 +101,7 @@ Locale.add('zh', {
 
 'Link\'s position':'林克位置',
 'Coordinates':'坐标',
+'Map':'地图',
 
 'Map pins':'地图标记',
 'Remove all map pins':'移除所有地图标记',
@@ -147,6 +148,7 @@ Locale.add('zh', {
 'Autobuilder':'蓝图重现',
 'Blueprint':'蓝图',
 'Preview':'预览',
+'Preview is possible thanks to':'预览功能由以下提供',
 
 'Experience':'履历',
 'Total experience':'综合履历积分',
@@ -159,6 +161,10 @@ Locale.add('zh', {
 'Broken times':'损坏次数：',
 'Unlock all':'全部解锁',
 'Reset ghost seeds':'重置阴影',
+'Help':'帮助',
+'Import mod variables':'导入模组变量',
+'Select save slot to edit':'选择要编辑的存档槽位',
+'Show this warning next time':'下次继续显示此警告',
 
 /* 怪物名称 */
 'Soldier Construct I':'兵队魔像',
