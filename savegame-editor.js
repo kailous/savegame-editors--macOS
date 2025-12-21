@@ -196,12 +196,25 @@ MarcDragAndDrop=(function(){
 /* savegame load/save */
 var tempFile,hasBeenLoaded=false,originalSaveBackup=null;
 var backupDirHandle=null, saveFileHandle=null;
+var saveFilePath='', saveRootPath='';
+var canUseNodeFs=false, nodeFs=null, nodePath=null;
+try{
+	nodeFs=require('fs');
+	nodePath=require('path');
+	canUseNodeFs=true;
+}catch(_){}
 function _tempFileLoadFunction(){
 	if(SavegameEditor.checkValidSavegame()){
 		hide('dragzone');
 		// keep a pristine copy for backup before any editor mutations
 		if(tempFile && tempFile._u8array){
 			originalSaveBackup=new Uint8Array(tempFile._u8array);
+		}
+		if(typeof window.__totkSaveFilePath!=='undefined'){
+			saveFilePath=window.__totkSaveFilePath;
+		}
+		if(typeof window.__totkSaveRoot!=='undefined'){
+			saveRootPath=window.__totkSaveRoot;
 		}
 
 		if(SavegameEditor.preload && !hasBeenLoaded){
@@ -236,6 +249,11 @@ function closeFileConfirm(){
 	});
 }
 function closeFile(){
+	// In this build we only ship the TOTK editor; closing should return to root index
+	if(/zelda-totk/.test(window.location.pathname)){
+		window.location.href='../index.html';
+		return;
+	}
 	show('dragzone');
 	hide('the-editor');
 	hide('toolbar');
@@ -254,6 +272,10 @@ function backupOriginalSave(){
 		return;
 	}
 	try{
+		if(canUseNodeFs && saveFilePath){
+			backupWithNodeFs();
+			return;
+		}
 		var timestamp=(function(){
 			var d=new Date();
 			var pad=function(n){return n<10?'0'+n:n;};
@@ -352,7 +374,51 @@ async function writeEditedToNative(){
 	}
 }
 
+function backupWithNodeFs(){
+	if(!canUseNodeFs || !saveFilePath || !originalSaveBackup || !nodePath){
+		return false;
+	}
+	try{
+		var slotDir=nodePath.dirname(saveFilePath);
+		var backupDir=nodePath.join(slotDir,'backup');
+		if(!nodeFs.existsSync(backupDir)){
+			nodeFs.mkdirSync(backupDir, {recursive:true});
+		}
+		var backupName=buildTimestampedName(tempFile && tempFile.fileName ? tempFile.fileName : 'progress.sav');
+		var backupPath=nodePath.join(backupDir, backupName);
+		nodeFs.writeFileSync(backupPath, originalSaveBackup);
+		return true;
+	}catch(err){
+		console.error('Node backup failed', err);
+		return false;
+	}
+}
+
+function writeEditedWithNodeFs(){
+	if(!canUseNodeFs || !saveFilePath || !tempFile || !tempFile._u8array){
+		return false;
+	}
+	try{
+		var dir=nodePath.dirname(saveFilePath);
+		if(!nodeFs.existsSync(dir)){
+			nodeFs.mkdirSync(dir, {recursive:true});
+		}
+		nodeFs.writeFileSync(saveFilePath, tempFile._u8array);
+		return true;
+	}catch(err){
+		console.error('Node save failed', err);
+		return false;
+	}
+}
+
 async function nativeSaveWithBackup(){
+	if(canUseNodeFs && saveFilePath){
+		var backed=backupWithNodeFs();
+		if(!backed){return false;}
+		SavegameEditor.save();
+		var wrote=writeEditedWithNodeFs();
+		return !!wrote;
+	}
 	if(!originalSaveBackup || !originalSaveBackup.length){
 		return false;
 	}

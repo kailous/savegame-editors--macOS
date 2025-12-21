@@ -1050,11 +1050,13 @@
 
 	function loadPayload(){
 		try{
-			var data=JSON.parse(payload);
-			if(!data || !data.progress){return;}
-			var buffer=base64ToArrayBuffer(data.progress);
+		var data=JSON.parse(payload);
+		if(!data || !data.progress){return;}
+		var buffer=base64ToArrayBuffer(data.progress);
+		window.__totkSaveFilePath=data.filePath||'';
+		window.__totkSaveRoot=data.saveRoot||'';
 
-			tempFile=new MarcFile(buffer.byteLength);
+		tempFile=new MarcFile(buffer.byteLength);
 			tempFile.fileName=data.fileName || 'progress.sav';
 			tempFile.fileType='application/octet-stream';
 			tempFile._u8array=new Uint8Array(buffer);

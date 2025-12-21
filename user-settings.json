@@ -1,7 +1,14 @@
 {
-  "lastSaveRoot": "",
-  "lastSlots": [],
+  "lastSaveRoot": "/Volumes/KailousGames/Switch/system/bis/user/save/0000000000000001/0",
+  "lastSlots": [
+    "slot_00",
+    "slot_01",
+    "slot_02",
+    "slot_03",
+    "slot_04",
+    "slot_05"
+  ],
   "lastBackupDir": "",
-  "lastSaveFileName": "",
-  "updatedAt": ""
+  "lastSaveFileName": "/Volumes/KailousGames/Switch/system/bis/user/save/0000000000000001/0/slot_01/progress.sav",
+  "updatedAt": "2025-12-21T09:33:56.627Z"
 }
