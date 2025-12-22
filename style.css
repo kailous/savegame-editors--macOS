@@ -227,6 +227,7 @@ a {
 
 .logo {
   width: 100%;
+  max-width: 450px;
 }
 .title-container {
   width: 100%;

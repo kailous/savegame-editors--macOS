@@ -81,6 +81,16 @@
 		return buf.buffer.slice(buf.byteOffset, buf.byteOffset+buf.byteLength);
 	}
 
+	function hideContent(){
+		var contentEls=document.querySelectorAll('.content');
+		contentEls.forEach(function(el){
+			el.style.display='none';
+		});
+	}
+	if(typeof window!=='undefined'){
+		window.hideContent=hideContent;
+	}
+
 	async function autoLoadLastRoot(){
 		if(!hasNode || !userSettings.lastSaveRoot){
 			return;
@@ -88,6 +98,10 @@
 		var root=userSettings.lastSaveRoot;
 		if(!fs.existsSync(root)){
 			coverMessage.textContent='上次的目录不存在：'+root;
+			// 调用hideContent()
+			if(typeof hideContent==='function'){
+				hideContent();
+			}
 			return;
 		}
 		coverMessage.textContent='正在读取 '+root+'...';
@@ -118,9 +132,17 @@
 				loadCaptions(files, root);
 			}else{
 				coverMessage.textContent='目录中未找到 slot 相关文件：'+root;
+				// 调用hideContent()
+				if(typeof hideContent==='function'){
+					hideContent();
+				}
 			}
 		}catch(err){
 			coverMessage.textContent='读取目录失败：'+err.message;
+			// 调用hideContent()
+			if(typeof hideContent==='function'){
+				hideContent();
+			}
 		}
 	}
 
@@ -417,6 +439,10 @@
 			coverMessage.textContent='找到 '+coverList.childElementCount+' 个存档';
 		}else{
 			coverMessage.textContent='未能解析任何存档';
+			// 调用hideContent()
+			if(typeof hideContent==='function'){
+				hideContent();
+			}
 		}
 
 		if(errors.length){
