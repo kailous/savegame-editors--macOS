@@ -5,9 +5,12 @@
   "private": true,
   "main": "electron-main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pkg-mac-arm": "electron-packager . totk-savegame-editor --platform=darwin --arch=arm64 --out=dist --overwrite",
+    "pkg-win": "electron-packager . totk-savegame-editor --platform=win32 --arch=x64 --out=dist --overwrite"
   },
   "devDependencies": {
-    "electron": "30.5.1"
+    "electron": "30.5.1",
+    "electron-packager": "^17.1.2"
   }
 }
