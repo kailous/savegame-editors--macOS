@@ -1,6 +1,7 @@
 :root {
   --accent: #49c5ff;
   --accent-text: #0d1a23;
+  --titlebar-height: 36px;
   --btn-border: #545a66;
   --btn-hover-bg: #353a45;
   --cover-bg: #242731;

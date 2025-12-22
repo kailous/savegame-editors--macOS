@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>选择存档目录 | Tears of the Kingdom Savegame Editor</title>
-	<meta http-equiv="content-Type" content="text/html; charset=UTF-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-	<link rel="stylesheet" type="text/css" href="style.css"/>
-</head>
-<body>
-		<div class="header">
-			<img src="zelda-totk/assets/logo2.png" class="logo" alt="《塞尔达传说 王国之泪》" />
-			<p>存档编辑器</p>
+		<title>选择存档目录 | Tears of the Kingdom Savegame Editor</title>
+		<meta http-equiv="content-Type" content="text/html; charset=UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+			<div class="header">
+				<div class="title-container">
+					<img src="zelda-totk/assets/logo2.png" class="logo" alt="《塞尔达传说 王国之泪》" />
+				<p>存档编辑器</p>
+				<div class="message" id="cover-message">尚未找到存档</div>
+			</div>
 			<div class="picker">
 				<input type="file" id="dir-input" name="dir-input" webkitdirectory directory multiple />
 				<div class="status">
@@ -20,7 +23,6 @@
 			</div>
 		</div>
 		<div class="content">
-			<div class="message" id="cover-message">尚未加载封面</div>
 			<div class="covers" id="cover-list"></div>
 			<template id="cover-template">
 				<div class="cover">

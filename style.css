@@ -4,20 +4,27 @@
 * {
   box-sizing: border-box;
 }
-
+html {
+  height: 100%;
+}
 body {
-    align-items: flex-start;
+    -webkit-app-region: drag;
+    align-items: stretch;
     background-image: var(--img-bg);
     color: var(--text-primary);
     display: flex;
     font-family: 'Open Sans', sans-serif;
     justify-content: center;
     margin: 0;
+    height: 100%;
     min-height: 100vh;
     flex-direction: row;
     flex-wrap: nowrap;
-    gap: 20px;
-    padding: 20px;
+    gap: 60px;
+    padding: calc(var(--titlebar-height) + 20px) 60px 20px 20px;
+}
+body > div {
+    -webkit-app-region: no-drag;
 }
 
 a {
@@ -26,21 +33,25 @@ a {
 }
 
 .header {
+  /* 高度撑满布局 */
+  height: 100%;
   text-align: center;
-    width: min-content;
+    width: 100%;
     display: flex;
     flex-direction: column;
     order: 2;
     align-items: center;
+    justify-content: space-between;
 }
 .content {
   order: 1;
-  width: 100%;
+  min-width: 52%;
+  height: 100%;
 }
 .header h1 {
   color: var(--accent);
   font-size: 26px;
-  margin: 0 0 10px;
+  /* margin: 0 0 10px; */
 }
 
 .header p {
@@ -57,7 +68,7 @@ a {
   display: flex;
   /* 横向排列 */
   flex-direction: column;
-  width: min-content;
+  width: 100%;
   gap: 15px;
 }
 
@@ -97,6 +108,8 @@ a {
 
 .status .muted {
   color: var(--text-muted);
+  /* 允许换行 */
+  word-break: break-word;
 }
 
 .actions {
@@ -137,7 +150,8 @@ a {
 .covers {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 15px;
+  height: 100%;
 }
 
 .cover {
@@ -147,7 +161,7 @@ a {
   box-shadow: var(--shadow-card);
   display: inline-flex;
   overflow: hidden;
-  /* height: 120px; */
+  height: 100%;
 }
 
 .cover img {
@@ -212,5 +226,13 @@ a {
 }
 
 .logo {
-  width: 60%;
+  width: 100%;
+}
+.title-container {
+  width: 100%;
+  font-size: 18px;
+}
+.title-container p {
+  /* 加粗 */
+  font-weight: 700;
 }

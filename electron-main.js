@@ -3,11 +3,17 @@ const {app, BrowserWindow, shell} = require('electron');
 
 const createWindow = () => {
 	const mainWindow = new BrowserWindow({
-		width: 1400,
+		width: 1085,
 		height: 900,
 		minWidth: 1100,
 		minHeight: 700,
 		backgroundColor: '#1f1f1f',
+		titleBarStyle: 'hiddenInset',
+		titleBarOverlay: {
+			color: '#1f1f1f',
+			symbolColor: '#e8e8e8',
+			height: 36
+		},
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false
