@@ -59,6 +59,23 @@ a {
   margin: 0;
 }
 
+.language-switch{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin:12px 0 4px;
+  color: var(--text-secondary);
+}
+
+.language-switch select{
+  background: var(--cover-bg);
+  border: 1px solid var(--cover-border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 8px 10px;
+}
+
 .picker {
   background: var(--picker-bg);
   border: 1px dashed var(--picker-border);
