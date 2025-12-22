@@ -7,11 +7,19 @@
 	<link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-	<div class="wrapper">
 		<div class="header">
 			<img src="zelda-totk/assets/logo2.png" class="logo" alt="《塞尔达传说 王国之泪》" />
 			<p>存档编辑器</p>
+			<div class="picker">
+				<input type="file" id="dir-input" name="dir-input" webkitdirectory directory multiple />
+				<div class="status">
+					<div id="status-text" class="muted">尚未选择目录</div>
+					<div id="status-detail" class="muted"></div>
+				</div>
+				<label for="dir-input">选择存档目录</label>
+			</div>
 		</div>
+		<div class="content">
 			<div class="message" id="cover-message">尚未加载封面</div>
 			<div class="covers" id="cover-list"></div>
 			<template id="cover-template">
@@ -29,15 +37,7 @@
 					</div>
 				</div>
 			</template>
-			<div class="picker">
-				<input type="file" id="dir-input" name="dir-input" webkitdirectory directory multiple />
-				<div class="status">
-					<div id="status-text" class="muted">尚未选择目录</div>
-					<div id="status-detail" class="muted"></div>
-				</div>
-				<label for="dir-input">选择存档目录</label>
-			</div>
-	</div>
+		</div>
 	<script type="text/javascript" src="index.js"></script>
 </body>
 </html>
