@@ -25,7 +25,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 1100px;
+  max-width: 800px;
   padding: 40px 24px 60px;
   width: 100%;
 }
@@ -44,15 +44,6 @@ a {
 .header p {
   color: var(--text-secondary);
   margin: 0;
-}
-
-.panel {
-  background-color: var(--panel-bg);
-  backdrop-filter: blur(2px);
-  border: 0.25px solid var(--panel-border);
-  border-radius: 14px;
-  box-shadow: var(--shadow-strong);
-  padding: 28px;
 }
 
 .picker {
@@ -147,6 +138,7 @@ a {
   box-shadow: var(--shadow-card);
   display: inline-flex;
   overflow: hidden;
+  /* height: 120px; */
 }
 
 .cover img {
@@ -211,5 +203,5 @@ a {
 }
 
 .logo {
-  width: 50%;
+  width: 20%;
 }

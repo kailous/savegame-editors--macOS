@@ -396,9 +396,9 @@
 		}
 
 		if(coverList.childElementCount){
-			coverMessage.textContent='找到 '+coverList.childElementCount+' 个存档槽封面';
+			coverMessage.textContent='找到 '+coverList.childElementCount+' 个存档';
 		}else{
-			coverMessage.textContent='未能解析任何封面';
+			coverMessage.textContent='未能解析任何存档';
 		}
 
 		if(errors.length){
