@@ -303,97 +303,115 @@
 		persistUserSettings();
 
 		var errors=[];
+		var parsedEntries=[];
 		for(const [slot, file] of captionMap){
 			try{
 				var captionData=await parseCaption(file);
-				var card=null;
-				if(coverTemplate && coverTemplate.content && coverTemplate.content.firstElementChild){
-					card=coverTemplate.content.firstElementChild.cloneNode(true);
-				}
-				if(!card){
-					card=document.createElement('div');
-					card.className='cover';
-					var fallbackImg=document.createElement('img');
-					card.appendChild(fallbackImg);
-					var fallbackLabel=document.createElement('div');
-					fallbackLabel.className='label';
-					card.appendChild(fallbackLabel);
-					var fallbackMeta=document.createElement('div');
-					fallbackMeta.className='meta';
-					card.appendChild(fallbackMeta);
-					var fallbackActions=document.createElement('div');
-					fallbackActions.className='actions';
-					card.appendChild(fallbackActions);
-				}
-
-				var img=card.querySelector('img');
-				if(img){
-					img.src=captionData.imgUrl;
-					img.alt=slot+' 封面';
-				}
-
-				var label=card.querySelector('.label');
-				if(label){
-					label.textContent=slot;
-				}
-
-				var meta=card.querySelector('.meta');
-				if(meta){
-					var dateEl=meta.querySelector('.date');
-					if(!dateEl){
-						dateEl=document.createElement('span');
-						dateEl.className='date';
-						meta.appendChild(dateEl);
-					}
-					dateEl.textContent=captionData.dateText;
-
-					var autosaveEl=meta.querySelector('.autosave');
-					if(!autosaveEl){
-						autosaveEl=document.createElement('span');
-						autosaveEl.className='autosave';
-						meta.appendChild(autosaveEl);
-					}
-					if(captionData.isAutosave){
-						autosaveEl.textContent='自动存档';
-						autosaveEl.style.display='inline-block';
-					}else{
-						autosaveEl.textContent='';
-						autosaveEl.style.display='none';
-					}
-				}
-
-				var actions=card.querySelector('.actions');
-				if(!actions){
-					actions=document.createElement('div');
-					actions.className='actions';
-					card.appendChild(actions);
-				}
-				while(actions.firstChild){
-					actions.removeChild(actions.firstChild);
-				}
-
-				const progressFile=progressMap.get(slot);
-				if(progressFile){
-					var openBtn=document.createElement('button');
-					openBtn.className='btn block';
-					openBtn.textContent='编辑此存档';
-					openBtn.addEventListener('click', function(){
-						openSlot(slot, progressFile);
-					});
-					actions.appendChild(openBtn);
-				}else{
-					var warn=document.createElement('div');
-					warn.className='message';
-					warn.style.color='#ffb347';
-					warn.textContent='缺少 progress.sav 无法打开';
-					actions.appendChild(warn);
-				}
-
-				coverList.appendChild(card);
+				parsedEntries.push({
+					slot: slot,
+					captionData: captionData,
+					progressFile: progressMap.get(slot)
+				});
 			}catch(err){
 				errors.push(slot+': '+err.message);
 			}
 		}
+
+		parsedEntries.sort(function(a, b){
+			var aAuto=a.captionData.isAutosave;
+			var bAuto=b.captionData.isAutosave;
+			if(aAuto===bAuto){ return 0; }
+			return aAuto ? 1 : -1; // 非自动存档排前
+		});
+
+		parsedEntries.forEach(function(entry){
+			var slot=entry.slot;
+			var captionData=entry.captionData;
+			var card=null;
+			if(coverTemplate && coverTemplate.content && coverTemplate.content.firstElementChild){
+				card=coverTemplate.content.firstElementChild.cloneNode(true);
+			}
+			if(!card){
+				card=document.createElement('div');
+				card.className='cover';
+				var fallbackImg=document.createElement('img');
+				card.appendChild(fallbackImg);
+				var fallbackLabel=document.createElement('div');
+				fallbackLabel.className='label';
+				card.appendChild(fallbackLabel);
+				var fallbackMeta=document.createElement('div');
+				fallbackMeta.className='meta';
+				card.appendChild(fallbackMeta);
+				var fallbackActions=document.createElement('div');
+				fallbackActions.className='actions';
+				card.appendChild(fallbackActions);
+			}
+
+			var img=card.querySelector('img');
+			if(img){
+				img.src=captionData.imgUrl;
+				img.alt=slot+' 封面';
+			}
+
+			var label=card.querySelector('.label');
+			if(label){
+				label.textContent=slot;
+			}
+
+			var meta=card.querySelector('.meta');
+			if(meta){
+				var dateEl=meta.querySelector('.date');
+				if(!dateEl){
+					dateEl=document.createElement('span');
+					dateEl.className='date';
+					meta.appendChild(dateEl);
+				}
+				dateEl.textContent=captionData.dateText;
+
+				var autosaveEl=meta.querySelector('.autosave');
+				if(!autosaveEl){
+					autosaveEl=document.createElement('span');
+					autosaveEl.className='autosave';
+					meta.appendChild(autosaveEl);
+				}
+				if(captionData.isAutosave){
+					autosaveEl.textContent='自动存档';
+					autosaveEl.style.display='inline-block';
+				}else{
+					autosaveEl.textContent='';
+					autosaveEl.style.display='none';
+				}
+			}
+
+			var actions=card.querySelector('.actions');
+			if(!actions){
+				actions=document.createElement('div');
+				actions.className='actions';
+				card.appendChild(actions);
+			}
+			while(actions.firstChild){
+				actions.removeChild(actions.firstChild);
+			}
+
+			const progressFile=entry.progressFile;
+			if(progressFile){
+				var openBtn=document.createElement('button');
+				openBtn.className='btn block';
+				openBtn.textContent='编辑此存档';
+				openBtn.addEventListener('click', function(){
+					openSlot(slot, progressFile);
+				});
+				actions.appendChild(openBtn);
+			}else{
+				var warn=document.createElement('div');
+				warn.className='message';
+				warn.style.color='#ffb347';
+				warn.textContent='缺少 progress.sav 无法打开';
+				actions.appendChild(warn);
+			}
+
+			coverList.appendChild(card);
+		});
 
 		if(coverList.childElementCount){
 			coverMessage.textContent='找到 '+coverList.childElementCount+' 个存档';
