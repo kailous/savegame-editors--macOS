@@ -113,7 +113,7 @@
 			});
 			if(files.length){
 				currentRoot=path.basename(root);
-				statusText.textContent='自动加载目录：'+root;
+				statusText.textContent='自动加载目录：\n'+root;
 				statusDetail.textContent='找到 '+files.length+' 个文件';
 				loadCaptions(files, root);
 			}else{

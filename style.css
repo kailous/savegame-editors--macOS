@@ -50,21 +50,27 @@ a {
   background: var(--picker-bg);
   border: 1px dashed var(--picker-border);
   border-radius: 10px;
-  padding: 30px 20px;
+  padding: 20px;
   text-align: center;
+  display: flex;
+  /* 横向排列 */
+  flex-direction: row;
+  gap: 15px;
 }
 
 .picker label {
-  background: var(--accent);
-  border-radius: 8px;
-  box-shadow: var(--shadow-accent);
-  color: var(--accent-text);
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 700;
-  margin-bottom: 12px;
-  padding: 14px 22px;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  /* 禁止换行 */
+  white-space: nowrap;
+    background: var(--highlight-color);
+    border-radius: 8px;
+    color: var(--accent-text);
+    cursor: pointer;
+    display: inline-flex;
+    font-weight: 700;
+    padding: 14px 22px;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
 }
 
 .picker label:hover {
@@ -82,7 +88,8 @@ a {
 .status {
   color: var(--text-detail);
   font-size: 14px;
-  margin-top: 10px;
+  /* 左对齐 */
+  text-align: left;
 }
 
 .status .muted {
@@ -128,7 +135,6 @@ a {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 22px;
 }
 
 .cover {
