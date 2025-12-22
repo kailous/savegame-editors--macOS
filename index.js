@@ -5,8 +5,6 @@
 	var coverList=document.getElementById('cover-list');
 	var coverMessage=document.getElementById('cover-message');
 	var coverTemplate=document.getElementById('cover-template');
-	var lastRootHint=document.getElementById('last-root-hint');
-	var currentRoot='';
 	var hasNode=typeof window.require==='function';
 	var fs=null, path=null, appRoot='';
 	if(hasNode){
@@ -26,6 +24,7 @@
 		updatedAt:''
 	};
 	var settingsLocalKey='totkUserSettings';
+	var allocatedObjectUrls=[];
 
 	loadUserSettings().then(autoLoadLastRoot);
 
@@ -41,7 +40,6 @@
 		var first=files[0];
 		var relativePath=first.webkitRelativePath || first.name;
 		var root=relativePath.split('/')[0] || '存档目录';
-		currentRoot=root;
 		var count=files.length;
 		statusText.textContent='已选择目录：'+root;
 		var samplePaths=files.slice(0,3).map(function(file){return file.webkitRelativePath || file.name;});
@@ -91,6 +89,13 @@
 		window.hideContent=hideContent;
 	}
 
+	function cleanupObjectUrls(){
+		allocatedObjectUrls.forEach(function(url){
+			try{ URL.revokeObjectURL(url); }catch(_){}
+		});
+		allocatedObjectUrls.length=0;
+	}
+
 	async function autoLoadLastRoot(){
 		if(!hasNode || !userSettings.lastSaveRoot){
 			return;
@@ -126,7 +131,6 @@
 				}
 			});
 			if(files.length){
-				currentRoot=path.basename(root);
 				statusText.textContent='自动加载目录：\n'+root;
 				statusDetail.textContent='找到 '+files.length+' 个文件';
 				loadCaptions(files, root);
@@ -252,6 +256,7 @@
 		var bytes=new Uint8Array(buffer, jpgOffset+4, jpgSize);
 		var blob=new Blob([bytes], {type:'image/jpeg'});
 		var imgUrl=URL.createObjectURL(blob);
+		allocatedObjectUrls.push(imgUrl);
 
 		var year=captionReadU32ByHash(view, 0x9811A3F7);
 		var minute=captionReadU32ByHash(view, 0x27853BF7);
@@ -285,6 +290,7 @@
 		var existingErrors=document.querySelectorAll('.message.error');
 		existingErrors.forEach(function(el){el.remove();});
 
+		cleanupObjectUrls();
 		coverList.innerHTML='';
 		coverMessage.textContent='正在读取封面...';
 
